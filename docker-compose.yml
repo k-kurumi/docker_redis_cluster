@@ -1,0 +1,41 @@
+#
+# redis masters
+#
+redisa1: &default
+  build: ./redis_template
+  volumes:
+    - /etc/localtime:/etc/localtime:ro
+
+redisb1:
+  <<: *default
+
+redisc1:
+  <<: *default
+
+
+#
+# redis slaves
+#
+redisa2:
+  <<: *default
+
+redisb2:
+  <<: *default
+
+redisc2:
+  <<: *default
+
+
+#
+# クラスタ化のスクリプト担当
+#
+commander:
+  <<: *default
+  links:
+    - redisa1 # master
+    - redisb1 # master
+    - redisc1 # master
+    - redisa2 # slave
+    - redisb2 # slave
+    - redisc2 # slave
+  command: ./create_cluster.sh
